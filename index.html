@@ -1,5 +1,9 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	
 	<link rel="openid.server"
         href="http://www.myopenid.com/server" />
 	<link rel="openid.delegate"
@@ -48,6 +52,9 @@
 		.contacts strong {
 			color: black;
 		}
+		.sublist {
+			list-style-type: none;
+		}
     </style>
 	<title>Victor Grigoriev. CV</title>
 </head>
@@ -62,26 +69,30 @@
 		<div class="contacts"> Skype: <strong class="skype">vectoroc</strong> </div>
 	</div>
 	<div class="resume">
-		<p>
+		<div>
 			I've been working in web programming for 3 years by now. My work experience is basically programming in php/js. I have work experience with ZendFramework(intermediate), CakePHP(beginner), Drupal(advanced). Attendant experience is:
 			<ul>
 				<li>js frameworks:</li>
-				<ul>
-					<li>prototype - advanced;</li>
-					<li>extjs - novice;</li>
-					<li>jquery - intermediate;</li>
-					<li>yui - intermediate;</li>
-					<li>dojo - beginner.</li>
-				</ul>
+				<li class="sublist">
+					<ul>
+						<li>prototype - advanced;</li>
+						<li>extjs - novice;</li>
+						<li>jquery - intermediate;</li>
+						<li>yui - intermediate;</li>
+						<li>dojo - beginner.</li>
+					</ul>
+				</li>
 				<li>databases:</li>
-				<ul>
-					<li>MySQL - intermediate;</li>
-					<li>Oracle - beginner;</li>
-					<li>PostgreSql - beginner.</li>
-				</ul>
+				<li class="sublist">
+					<ul>
+						<li>MySQL - intermediate;</li>
+						<li>Oracle - beginner;</li>
+						<li>PostgreSql - beginner.</li>
+					</ul>
+				</li>
 			</ul>
-		</p>
-		<p>
+		</div>
+		<div>
 			Besides that, I had some programming experience during study at the University:
 			<ul>
 				<li>little program in machine code for soviet analog on Intel 8080 processor (Кр580ВМ80)</li>
@@ -89,14 +100,14 @@
 				<li>qt application (work with xml configuration of geometric figures)</li>
 				<li>3D graphing applications for QNX (based on TinyGL)</li>
 			</ul>
-		</p>
-		<p>
+		</div>
+		<div>
 			Diploma work - studying and testing system for learning programming in qnx. Server side work on LAMP stack and Drupal (some modules with my improvement). Client side - qnx application which allows to run demonstration programs.
-		</p>
-		<p class="date">Thu Sep 10 2009</p>
+		</div>
+		<div class="date">Thu Sep 10 2009</div>
 	</div>
 	
-			<div class="publications">
+	<div class="publications">
 		<ul>
 			<li>
 				<a 
