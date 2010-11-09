@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Element#descendantOf testcase</title>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" type="text/css" href="test.css">
+        <script type="text/javascript" src="prototype.js">
+        </script>
+        <script type="text/javascript" src="unittest.js">
+        </script>
+        <script type="text/javascript">
+            // <![CDATA[
+            document.observe('dom:loaded', function(){
+            
+                new Test.Unit.Runner({
+                    testDescendantOfWithDynamicallyCreatedElements: function(){
+                        with (this) {
+                            var testDiv;
+                            Element.insert(document.body, testDiv = new Element("div"));
+                            assert($('descendantOf_test_1').descendantOf(testDiv) !== true);
+                        }
+                    }
+                })
+            })
+            // ]]>
+        </script>
+    </head>
+    <body>
+        <div id="testlog">
+            <div id="logsummary">
+            </div>
+            <table id="logtable">
+                <thead>
+                    <tr>
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            Test
+                        </th>
+                        <th>
+                            Message
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="loglines">
+                </tbody>
+            </table>
+        </div>
+        <div id="descendantOf_test_1">
+        </div>
+    </body>
+</html>

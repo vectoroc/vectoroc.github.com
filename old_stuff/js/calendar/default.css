@@ -1,0 +1,134 @@
+.Calendar .control  {
+	font-size: 9px;
+	height: 18px;
+	width: 18px;
+}
+
+.Calendar .day_off_header {
+	background-color: #FF3333;
+	height: 14px;
+	width: 20px;
+	font-size: 9px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-align: center;
+	cursor: default;
+	border: 1px #FFFFFF outset;
+	padding: 0px;
+}
+
+.Calendar .day_header {
+	background-color: #666666;
+	height: 14px;
+	width: 20px;
+	font-size: 9px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-align: center;
+	cursor: default;
+	border: 1px #FFFFFF outset;
+	padding: 0px;
+}
+
+.Calendar .day_disabled {
+	font-size: 9px;
+	color:#999999;
+	font-weight: bold;
+	background-color: buttonface;
+	height: 14px;
+	width: 20px;
+	text-align: center;
+	cursor: default;
+	border: 1px #B4B4B4 solid;
+	padding: 0px;
+}
+
+.Calendar .day {
+	font-size: 9px;
+	font-weight: bold;
+	background-color: buttonface;
+	height: 14px;
+	width: 20px;
+	text-align: center;
+	cursor: default;
+	border: 1px #FFFFFF outset;
+	padding: 0px;
+}
+
+.Calendar .day_selected {
+	font-size: 9px;
+	font-weight: bold;
+	background-color: #FFFFCC;
+	height: 12px;
+	width: 18px;
+	text-align: center;
+	cursor: default;
+	border: 1px #CCCCCC inset;
+	padding: 0px;
+}
+
+.Calendar .day_off {
+	font-size: 9px;
+	font-weight: bold;
+	background-color: buttonface;
+	height: 14px;
+	width: 20px;
+	text-align: center ;
+	color: #FF0000 ;
+	cursor: default;
+	border: 1px #FFFFFF outset;
+	padding: 0px;
+}
+
+.Calendar .day_mouseover {
+	font-size: 9px;
+	font-weight: bold;
+	color: #990000;
+	background-color: buttonface;
+	height: 14px;
+	width: 20px;
+	text-align: center;
+	cursor: default;
+	border: 1px #FFFFFF outset;
+	padding: 0px;
+}
+
+.Calendar {
+	z-index: 51;
+	border-style: solid;
+	border-width: 1px;
+	border-color: buttonface threeddarkshadow threeddarkshadow buttonface;
+	position: absolute;
+	width: 176px;
+	height: 150px;
+}
+
+/* IE 6 hack */
+ * html .Calendar {
+	height: 160px;
+}
+
+.Calendar div {
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	border-style: solid;
+	border-width: 1px;
+	border-color: buttonhighlight buttonshadow buttonshadow white;
+	background: buttonface;
+}
+
+.Calendar div div {
+	background: none;
+	border: none;
+	position: absolute;
+	left: 0px;
+	top:5px;
+	width:176px;
+}
+
+.ListMonth, .ListYear {
+	font-family: verdana;
+	font-size: 11px;
+}

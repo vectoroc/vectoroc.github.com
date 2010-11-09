@@ -1,0 +1,70 @@
+
+<html>
+	<head>
+		<title>Unobtrusive form validation</title>
+		
+		<script src="js/prototype.js"></script>
+		<script src="js/FormValidation.js"></script>
+		<script>
+			document.observe('dom:loaded', function() {
+				$('test_form').observe('submit', function(e) {
+					e.stop();
+					
+					if ($('test_form').validate(true)) {
+						alert('*Yahoo* Validation passed!');
+					} else {
+						alert('*Sorry* Validation failed!');
+					}
+				});
+			});
+		</script>
+
+		<style type="text/css">
+			ul {
+				list-style-type:none;
+			}
+			
+			.validation-failed {
+				border: red 1px solid;
+			}
+			
+			.validation-passed {
+				border: green 1px solid;
+			}
+			
+			#test_form input {
+				display: block;
+				margin-left: 8em;
+			}			
+		</style>
+	</head>
+	<body>
+		<form id="test_form">
+			<ul>
+				<li>
+					<label for="number">validate-number</label>
+					<input type="text" name="number" class="validate-number">
+				</li>
+				<li>
+					<label for="number">validate-number &amp; required</label>
+					<input type="text" name="number" class="validate-number required">
+				</li>
+				<li>
+					<label for="email">validate-email</label>
+					<input type="text" name="email" class="validate-email">
+				</li>
+				<li>
+					<label for="email">validate-email &amp; required</label>
+					<input type="text" name="email" class="validate-email required">
+				</li>
+				<li>
+					<label for="url">validate-url</label>
+					<input type="text" name="url" class="validate-url">			
+				</li>
+				<li>
+					<input type="submit" value="validate">
+				</li>
+			</ul>
+		</form>		
+	</body>
+</html>
