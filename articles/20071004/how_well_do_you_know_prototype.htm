@@ -1,0 +1,298 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/code_highlighter.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/javascript.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/html.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/css.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/ruby.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/ebnf.js" type="text/javascript"></script>
+<style type="text/css">@import url(http://victor.org/webdev/ext-js/highlight/syntax.css);</style>
+<link rel="stylesheet" href="reset-fonts-grids.css" />
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8"><title>yura @ thinkweb2.com</title>
+		
+		<style type="text/css" media="all">
+			body {
+				font: 92%/144% Constantia, "Palatino Linotype", Palatino, Georgia, serif;
+				background: #fff;
+				color: #4C1B1B;
+				padding-top: 2em;
+			}
+			p {
+				text-indent: 2em;
+				margin-bottom: 2em;
+				text-align: justify;
+				line-height: 144%;
+				clear: left;
+			}
+			h2 {
+				font-size: 159%;
+				line-height: 197%;
+				margin-bottom: 2em;
+			}
+			a {
+				color: #B9121B;
+				text-decoration: none;
+				font-weight: bold;
+			}
+			a:hover {
+				background: #B9121B;
+				color: #fff;
+			}
+			strong {
+				font-weight: bold;
+			}
+			.small {
+				font-size: 60%;
+				margin-top: -0.85em;
+				color: #69f;
+			}
+			pre {
+				float: left;
+				margin: 0.5em 0.5em 0 0;
+				padding: 0.5em;
+				overflow: auto;
+			}
+			.wrong, .right {
+				float: left;
+				margin: 0.5em 0;
+			}
+			.wrong, .right {
+				width: 480px;
+			}
+			.right {
+				margin-left: 3em;
+			}
+			.number {
+				height: 1em;
+				line-height: 1em;
+				font-size: 197%;
+				float: left;
+				color: #fff;
+				padding: 0 0.5em;
+				background: #B9121B;
+				margin: 1.1em 1em 0 -2.3em;
+			}
+			.wrong pre {
+				background: #fee;
+			}
+			pre, .right pre {
+				background: #efe;
+			}
+			.right pre, .wrong pre {
+				width: 480px;
+			}
+			.desc {
+				text-indent: 0;
+				margin-left: 0.5em;
+			}
+			.double {
+				padding: 0 0.35em;
+			}
+			.update {
+				font-weight: bold;
+			}
+		</style></head><body>
+		<div id="doc2" class="yui-t7">
+			<div id="bd">
+				<div id="yui-main">
+					<div class="yui-b">
+						<h2>Насколько хорошо вы знаете Prototype
+							<p class="small">или разговор о преимуществе этих дополнительных 100 KB на вашей странице</p>
+						</h2>
+						<p>Давайте будем честными - Я пытался отвечать на похожие вопросы снова и снова. <a href="http://prototypejs.org/">Prototype.js</a> - широко используемая js библиотека с не очень удачной online-документацией. Я лично считаю <a href="http://prototypejs.org/api" alt="prototype.js API reference">справочник API</a>
+превосходным ресурсом (хоть и не без погрешностей), но он далёк от
+того, чтобы быть понятным новичкам. Я работал с prototyp-ом почти уже
+год и проводил уйму времени на <a href="irc://freenode.net" alt="#freenode IRC">IRC канале</a>. Сложно объяснить насколько абсурдные вопросы порой задают люди.
+Мне кажется, что в большинстве случаев используется prototype на 15%, не больше. Я не удивлюсь, если увижу <a href="http://prototypejs.org/api/ajax/request" title="Ajax.Request"><code>Ajax.Request</code></a> использованную с  <a href="http://developer.mozilla.org/en/docs/DOM:document.getElementById" title="document.getElementById at MDC"><code>document.getElementById</code></a> в одной строке.</p>
+                        <p class="update">Дополнение: <a href="http://thinkweb2.com/projects/prototype/?p=3" title="How well do you know prototype (part II)">Насколько хорошо вы знаете Prototype :: часть II</a> (<em>перевод будет позже</em>)</p>
+<p class="desc">
+Здесь я собрал наиболее частые примеры, <strong>НЕ</strong>
+использующие всех возможностей prototyp-а. Я надеюсь эо будет базовой
+точкой отсчета для разработок в ваших следующих проектах. Ну... начнём:
+</p>
+<p>
+	</p><div class="number">1</div>
+	<div class="wrong"><span>Неправильно:</span><pre><code class="javascript">document.getElementById('foo')</code></pre></div>
+	<div class="right"><span>Правильно:</span><pre><code class="javascript">$('foo')</code></pre></div>
+
+<p class="desc">
+	К удивлению некоторые люди фактически не знают об этом (подключают ~100KB файл лишь для использования вещей типа Ajax.Request)
+</p>
+<p>
+	</p><div class="number">2</div>
+	<div class="wrong"><span>Неправильно:</span><pre><code class="javascript">var woot = document.getElementById('bar').value</code></pre><pre><code class="javascript">var woot = $('bar').value</code></pre></div>
+	<div class="right"><span>Правильно:</span><pre><code class="javascript">var woot = $F('bar')</code></pre></div>
+
+<p class="desc">
+	Удобный способ чтения значений контролов формы
+</p>
+<p>
+	</p><div class="number">3</div>
+	<div class="wrong"><span>Неправильно:</span>
+<pre><code class="javascript">$('footer').style.height = '100px';
+$('footer').style.background = '#ffc';</code>
+</pre>
+	</div>
+	<div class="right"><span>Правильно:</span>
+<pre><code class="javascript">$('footer').setStyle({
+	height: '100px',
+	background: '#ffc'
+})</code>
+</pre></div>
+
+<p class="desc"> Мечтаете о том что IE будет соответствовать W3C
+стандартам? Не надейтесь! (но прототайп позволит вам забыть о проблемах
+кросс-браузерности)
+</p>
+<p>
+	</p><div class="number">4</div>
+	<div class="wrong"><span>Неправильно:</span><pre><code class="javascript">$('coolestWidgetEver').innerHTML = 'какой-то полезный контент'</code></pre></div>
+	<div class="right"><span>Правильно:</span><pre><code class="javascript">$('coolestWidgetEver').update('какой-то полезный контент')</code></pre></div>
+
+<p class="desc" style="margin-bottom: 0pt;"> Это один из тех простых
+довольно часто забываемых случаев. Да, я знаю, что это почти тоже самое,
+но я хочу видеть как вы сделаете тоже самое в первом варианте (ну разве
+chaining не крут?) </p>
+<pre style="margin-left: 0.5em;"><code class="javascript">$('coolestWidgetEver').update('some nifty content').addClassName('highlight').next().hide()</code></pre>
+
+<p>
+	</p><div class="number">5</div>
+	<div class="wrong"><span>Неправильно:</span><pre><code class="javascript">new Ajax.Request('ninja.php?weapon1=foo&amp;weapon2=bar')</code></pre></div>
+	<div class="right"><span>Правильно:</span>
+<pre><code class="javascript">new Ajax.Request('ninja.php', {
+	parameters: {
+		weapon1: 'foo',
+		weapon2: 'bar'
+	}
+})</code>
+</pre></div>
+
+<p class="desc">
+	Более чистое и лучше структурированное определение параметров
+</p>
+<p>
+	</p><div class="number">6</div>
+	<div class="wrong"><span>Неправильно:</span>
+<pre><code class="javascript">new Ajax.Request('blah.php', {
+	method: 'POST',
+	asynchronous: true,
+	contentType: 'application/x-www-form-urlencoded',
+	encoding: 'UTF-8',
+})</code>
+</pre>
+</div>
+	<div class="right"><span>Правильно:</span>
+<pre><code class="javascript">new Ajax.Request('blah.php')</code>
+</pre></div>
+
+<p class="desc"> Все это опции в Ajax.Request выставляются по
+умолчанию! "method: 'POST'" присутствует на каждой второй выложенной  для
+проверки странице, которую я вижу <br>(Всё ещё не веришь в наследование в JS? Не получается реализовать это? Просто используй преимущества Prototyp-а)</p>
+<p>
+	</p><div class="number">7</div>
+	<div class="wrong"><span>Неправильно:</span>
+<pre><code class="javascript">Event.observe('myContainer', 'click', doSomeMagic)</code>
+</pre>
+</div>
+	<div class="right"><span>Правильно:</span>
+<pre><code class="javascript">$('myContainer').observe('click', doSomeMagic)</code>
+</pre></div>
+
+<p class="desc"> Этот случай спорный, но второй вариант более Обьектно
+Ориентированный (ну... или того рода) и легче для усвоения (Так что
+решайте за себя сами)
+</p>
+<p>
+	</p><div class="number">8</div>
+	<div class="wrong"><span>Неправильно:</span>
+<pre><code class="javascript">$$('div.hidden').each(function(el){
+	el.show();
+})</code>
+</pre>
+</div>
+	<div class="right"><span>Правильно:</span>
+<pre><code class="javascript">$$('div.hidden').invoke('show')</code>
+</pre></div>
+
+<p class="desc">
+	Вот типичный случай "злоупотребления <a href="http://prototypejs.org/api/enumerable/each" title="each in prototype API"><code>each</code></a>". Существует  <a href="http://prototypejs.org/api/enumerable/invoke" title="invoke in prototype API"><code>invoke</code></a> для подобных целей! Досадно, что немногие люди знают о ней.
+</p>
+<p>
+	</p><div class="number">9</div>
+	<div class="wrong"><span>Неправильно:</span>
+<pre><code class="javascript">$$('div.collapsed').each(function(el){
+	el.observe('click', expand);
+})</code>
+</pre>
+</div>
+	<div class="right"><span>Правильно:</span>
+<pre><code class="javascript">$$('div.collapsed').invoke('observe', 'click', expand)</code>
+</pre></div>
+
+<p class="desc">
+Пользуйтесь  этим! Invoke также может быть использован для <a href="http://prototypejs.org/api/event/observe" title="Event.observe in prototype API">обработки событий</a> когда обходите коллекции элементов. Это реально просто, разве не так?</p>
+<p>
+	</p><div class="number double">10</div>
+	<div class="wrong"><span>Неправильно:</span>
+<pre><code class="javascript">$$('input.date').invoke('observe', 'focus', onFocus);
+$$('input.date').invoke('observe', 'blur', onBlur);</code>
+</pre>
+</div>
+	<div class="right"><span>Правильно:</span>
+<pre><code class="javascript">$$('input.date')
+	.invoke('observe', 'focus', onFocus)
+		.invoke('observe', 'blur', onBlur)</code>
+</pre></div>
+
+<p class="desc"> Некоторые люди склонны забывать о "нирване
+chaining-а". Не нравится, как оно выглядит? Думай о сохранении
+некоторого времени, не вызывая <a href="http://prototypejs.org/api/utility/dollar-dollar" title="$$ in prototype API"><code>$$</code></a> дважды!
+</p>
+
+
+<p>
+	</p><div class="number double">11</div>
+	<div class="wrong"><span>Неправильно:</span>
+<pre><code class="javascript">$('productTable').innerHTML = 
+	$('productTable').innerHTML + 
+	'&lt;tr&gt;&lt;td&gt;' + productId + ' '
+	+ productName + '&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;' 
+	+ productId + ' ' + productPrice + 
+	'&lt;/td&gt;&lt;/tr&gt;'</code>
+</pre>
+</div>
+	<div class="right"><span><a href="#link_1">Правильно: <sup>1</sup></a></span>
+<pre><code class="javascript">var rowTemplate = new Template('&lt;tr&gt;&lt;td&gt;#{id} #{name}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;#{id} #{price}&lt;/td&gt;&lt;/tr&gt;');
+$('productTable').insert(
+	rowTemplate.evaluate({
+		id: productId,
+		name: productName,
+		price: productPrice
+	}))
+)</code>
+</pre></div>
+
+<p class="desc">
+Нет, я не шучу. Это было выложено на #prototype и там было кое-что неправильно (хмм... Интересно что же...)<br>
+<a href="http://prototypejs.org/api/template" title="Template in prototype API">Templates</a>
+- отличное решения для этих отвратительных HTML строк. Меня тошнит от этих огромных конкатенаций строк. <a href="http://prototypejs.org/api/template/evaluate" title="evaluate in prototype API"><code>evaluate</code></a> решает проблемму организации структурированного подхода.</p>
+
+<h2>На этом всё. Оставайся на волне!</h2>
+					</div>
+				</div>
+			</div>
+			<div id="ft">
+				Created by <a href="http://thinkweb2.com/" title="kangax">kangax</a><br />translated by <a href="http://vectoroc.com">vectoroc</a><br> Вопросы? Предложения? Найди меня на #prototype [kangax] или пошли мне email [ kangax@gmail.com ]
+			</div>
+			<hr />
+			<div id="ft">
+				<a name="link_1" id="link_1">1.</a> Читайте <a href="/articles/20070928/prototype-160-release-candidate.html">изменения в Prototype 1.6 rc_0</a>. Вместо такой записи теперь можно писать <pre><code class="javascript">$('productTable').insert(
+	'&lt;tr&gt;&lt;td&gt;#{id} #{name}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;#{id} #{price}&lt;/td&gt;&lt;/tr&gt;'.interpolate({
+		id: productId,
+		name: productName,
+		price: productPrice
+	}))
+)</code>
+</pre>	</div>
+		</div>
+	</body></html>

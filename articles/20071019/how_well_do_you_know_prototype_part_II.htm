@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="keywords" content="prototype javascript tutorials kangax perfection kills">
+		<title>How well do you know prototype (part II)</title>
+		
+<style type="text/css">
+div.right, div.footer, p.next_prev { display: none; }
+.post h1 a { color: #333; border: none; text-decoration: none; }
+.header h1 img { border: none; }
+p {color: #444; }
+</style>		
+<meta name="keywords" content="reject, form#getinputs, intermediate, element#insert, event#observe">
+</head>
+<body>
+		<div class="left">
+          <div class="content">
+			<div class="post" id="post-3">
+	<h1>
+		Насколько хорошо вы знаете prototype (часть II)
+	</h1>
+	<div class="entry">
+	  <h2>1) Легкое определение нажатия клавиш</h2>
+      <p>Как мы определяем, какая клавиша была нажата? Prototype предоставляет множество синонимов для событиый нажатия клавиш, так что мы не должны запоминать, что return -это &quot;13&quot;, а escape - &quot;27&quot;. Почти все основные клавиши определены: KEY_RETURN,
+      KEY_ESC, KEY_TAB, KEY_LEFT, KEY_UP, KEY_RIGHT, KEY_DOWN. Смотри полный список  <a href="http://prototypejs.org/api/event" title="Event's KEY aliases">в API документации </a></p>
+      <div class="wp_syntax"><div class="code"><pre class="javascript">$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'myInput'</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">observe</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'keyup'</span>, <span style="color: rgb(0, 51, 102); font-weight: bold;">function</span><span style="color: rgb(102, 204, 102);">(</span>e<span style="color: rgb(102, 204, 102);">)</span><span style="color: rgb(102, 204, 102);">{</span>
+  <span style="color: rgb(0, 0, 102); font-weight: bold;">if</span> <span style="color: rgb(102, 204, 102);">(</span>e.<span style="color: rgb(0, 102, 0);">keyCode</span> == Event.<span style="color: rgb(0, 102, 0);">KEY_TAB</span><span style="color: rgb(102, 204, 102);">)</span>
+    doSomethingCoolWhenTabIsPressed<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(102, 204, 102);">)</span>;
+<span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span></pre></div></div>
+
+<h2>2) Предотвращать события скорее всего не понадобится</h2>
+<p>Иногда я  вижу, что параметр capturing (захват события) устанавливается явно в методе <tt>Event#observe</tt> в false. Хорошо то, что по умолчанию этот параметр установлен в false и вам редко когда понадобится задавать его значение явно. Следующие 2 строки полностью идентичны, так что мы можем пропустить последний аргумент:</p>
+
+<div class="wp_syntax"><div class="code">
+  <pre class="javascript">Event.<span style="color: rgb(0, 102, 0);">observe</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'productInfo'</span>, <span style="color: rgb(51, 102, 204);">'click'</span>, displayProductInfo, <span style="color: rgb(0, 51, 102); font-weight: bold;">false</span><span style="color: rgb(102, 204, 102);">)</span>; <span style="color: rgb(0, 153, 0); font-style: italic;">// 'false' может быть опущено</span>
+Event.<span style="color: rgb(0, 102, 0);">observe</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'productInfo'</span>, <span style="color: rgb(51, 102, 204);">'click'</span>, displayProductInfo<span style="color: rgb(102, 204, 102);">)</span>;</pre>
+</div></div>
+
+<p>или более короткий способ:</p>
+
+<div class="wp_syntax"><div class="code"><pre class="javascript">$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'productInfo'</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">observe</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'click'</span>, displayProductInfo, <span style="color: rgb(0, 51, 102); font-weight: bold;">false</span><span style="color: rgb(102, 204, 102);">)</span>; <span style="color: rgb(0, 153, 0); font-style: italic;">// 'false' </span><span style="color: rgb(0, 153, 0); font-style: italic;">может быть опущено</span>
+$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'productInfo'</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">observe</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'click'</span>, displayProductInfo<span style="color: rgb(102, 204, 102);">)</span>;</pre>
+</div></div>
+
+<h2>3) Вставляй грамотно</h2>
+<p>Один из других случаев значения по умолчанию  (“it’s-there-by-default”) - аргумент position метода 
+  <tt>Element#insert</tt>. Как ни странно это нигде не упоминается в документации - я на днях случайно это обнаружил в исходниках. <tt> insert </tt>принимает одно из четырёх значений  position: <strong>top</strong>, <strong>bottom</strong>, <strong>before</strong>, и <strong>after</strong>. Если мы пропустим этот аргумент, то по умолчанию он будет <strong>bottom</strong> (и к счастью оно необходимо в большинстве общих случаев). Следующие строки ведут себя одинаково:</p>
+
+<div class="wp_syntax"><div class="code">
+  <pre class="javascript"><span style="color: rgb(0, 51, 102); font-weight: bold;">new</span> Insertion.<span style="color: rgb(0, 102, 0);">Bottom</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'blogEntry'</span>,
+  <span style="color: rgb(0, 51, 102); font-weight: bold;">new</span> Template<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'&lt;div&gt;&lt;h2&gt;#{name}&lt;/h2&gt;&lt;p&gt;#{content}&lt;/p&gt;&lt;/div&gt;'</span><span style="color: rgb(102, 204, 102);">)</span>
+    .<span style="color: rgb(0, 102, 0);">evaluate</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(102, 204, 102);">{</span>
+      <span style="color: rgb(0, 0, 102);">name</span>: blogEntry.<span style="color: rgb(0, 0, 102);">name</span>,
+      content: blogEntry.<span style="color: rgb(0, 102, 0);">content</span>
+    <span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span><span style="color: rgb(102, 204, 102);">)</span>;
+&nbsp;
+<span style="color: rgb(0, 153, 0); font-style: italic;">// Insertion класс устарел - рекомендуется использоать метод Element#insert:</span>
+&nbsp;
+$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'blogEntry'</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">insert</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(0, 51, 102); font-weight: bold;">new</span> Template<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'&lt;div&gt;&lt;h2&gt;#{name}&lt;/h2&gt;&lt;p&gt;#{content}&lt;/p&gt;&lt;/div&gt;'</span><span style="color: rgb(102, 204, 102);">)</span>
+    .<span style="color: rgb(0, 102, 0);">evaluate</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(102, 204, 102);">{</span>
+      <span style="color: rgb(0, 0, 102);">name</span>: blogEntry.<span style="color: rgb(0, 0, 102);">name</span>,
+      content: blogEntry.<span style="color: rgb(0, 102, 0);">content</span>
+    <span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span>, <span style="color: rgb(51, 102, 204);">'bottom'</span> <span style="color: rgb(102, 204, 102);">)</span>; <span style="color: rgb(0, 153, 0); font-style: italic;">// "bottom" может быть опущено</span>
+&nbsp;
+$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'blogEntry'</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">insert</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(0, 51, 102); font-weight: bold;">new</span> Template<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'&lt;div&gt;&lt;h2&gt;#{name}&lt;/h2&gt;&lt;p&gt;#{content}&lt;/p&gt;&lt;/div&gt;'</span><span style="color: rgb(102, 204, 102);">)</span>
+    .<span style="color: rgb(0, 102, 0);">evaluate</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(102, 204, 102);">{</span>
+      <span style="color: rgb(0, 0, 102);">name</span>: blogEntry.<span style="color: rgb(0, 0, 102);">name</span>,
+      content: blogEntry.<span style="color: rgb(0, 102, 0);">content</span>
+    <span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span><span style="color: rgb(102, 204, 102);">)</span>;</pre>
+</div></div>
+
+<h2>4) Безбашенные формы </h2>
+<p>Простая отправка форм реально проста, но что если мы захотим предотвратить сериализацию определённых элементов перед отправкой по ajax? 
+Давайте расмотрим несколько способов решить эту проблему:</p>
+<p>Простая отправка формы с помощью .request</p>
+
+<div class="wp_syntax"><div class="code"><pre class="javascript">$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'register'</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">observe</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'submit'</span>, <span style="color: rgb(0, 51, 102); font-weight: bold;">function</span><span style="color: rgb(102, 204, 102);">(</span>e<span style="color: rgb(102, 204, 102);">)</span><span style="color: rgb(102, 204, 102);">{</span>
+  Event.<span style="color: rgb(0, 0, 102);">stop</span><span style="color: rgb(102, 204, 102);">(</span>e<span style="color: rgb(102, 204, 102);">)</span>;
+  $<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(0, 0, 102); font-weight: bold;">this</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">request</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(102, 204, 102);">)</span>;
+<span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span></pre></div></div>
+
+<p>С помощью  .getInputs можно легко отфильровать элементы атрибутам &quot;type&quot; и &quot;name&quot;. В этом примере мы сериализуем элементы с именем ‘email’ и отправляем результат по URI, лежащему в атрибуте формы “action”.</p>
+
+<div class="wp_syntax"><div class="code"><pre class="javascript">$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'register'</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">observe</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'submit'</span>, <span style="color: rgb(0, 51, 102); font-weight: bold;">function</span><span style="color: rgb(102, 204, 102);">(</span>e<span style="color: rgb(102, 204, 102);">)</span><span style="color: rgb(102, 204, 102);">{</span>
+  Event.<span style="color: rgb(0, 0, 102);">stop</span><span style="color: rgb(102, 204, 102);">(</span>e<span style="color: rgb(102, 204, 102);">)</span>;
+  <span style="color: rgb(0, 51, 102); font-weight: bold;">new</span> Ajax.<span style="color: rgb(0, 102, 0);">Request</span><span style="color: rgb(102, 204, 102);">(</span>$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(0, 0, 102); font-weight: bold;">this</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">readAttribute</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'action'</span><span style="color: rgb(102, 204, 102);">)</span>, <span style="color: rgb(102, 204, 102);">{</span>
+    parameters: Form.<span style="color: rgb(0, 102, 0);">serializeElements</span><span style="color: rgb(102, 204, 102);">(</span>$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(0, 0, 102); font-weight: bold;">this</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">getInputs</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">''</span>, <span style="color: rgb(51, 102, 204);">'email'</span><span style="color: rgb(102, 204, 102);">)</span><span style="color: rgb(102, 204, 102);">)</span>
+  <span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span>
+<span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span></pre></div></div>
+
+<p>Применение  .getInputs может помочь в большинстве случаев, но что если мы хотим исключить элементы, имеющие атрибут “multiple”? Можно поступить так:</p>
+
+<div class="wp_syntax"><div class="code"><pre class="javascript">$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'register'</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">observe</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'submit'</span>, <span style="color: rgb(0, 51, 102); font-weight: bold;">function</span><span style="color: rgb(102, 204, 102);">(</span>e<span style="color: rgb(102, 204, 102);">)</span><span style="color: rgb(102, 204, 102);">{</span>
+  Event.<span style="color: rgb(0, 0, 102);">stop</span><span style="color: rgb(102, 204, 102);">(</span>e<span style="color: rgb(102, 204, 102);">)</span>;
+  <span style="color: rgb(0, 51, 102); font-weight: bold;">new</span> Ajax.<span style="color: rgb(0, 102, 0);">Request</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(0, 0, 102); font-weight: bold;">this</span>.<span style="color: rgb(0, 102, 0);">readAttribute</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'action'</span><span style="color: rgb(102, 204, 102);">)</span>, <span style="color: rgb(102, 204, 102);">{</span>
+    parameters: Form.<span style="color: rgb(0, 102, 0);">serializeElements</span><span style="color: rgb(102, 204, 102);">(</span>$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(0, 0, 102); font-weight: bold;">this</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">getElements</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(102, 204, 102);">)</span>
+      .<span style="color: rgb(0, 102, 0);">reject</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(0, 51, 102); font-weight: bold;">function</span><span style="color: rgb(102, 204, 102);">(</span>el<span style="color: rgb(102, 204, 102);">)</span><span style="color: rgb(102, 204, 102);">{</span><span style="color: rgb(0, 0, 102); font-weight: bold;">return</span> el.<span style="color: rgb(0, 102, 0);">hasAttribute</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'multiple'</span><span style="color: rgb(102, 204, 102);">)</span><span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span>
+    <span style="color: rgb(102, 204, 102);">)</span>;
+  <span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span>
+<span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span></pre></div></div>
+
+<p class="colored">Етить, что за хрень тут происходит?! </p>
+<p> Когда возникает событие посыла, мы отменяем дефолтное действие отсылки  <code>Event.stop(e)</code>, получаем все элементы формы <code>this.getElements()</code>, перебираем их, обрасывая элемты с атрибутом “multiple” <code>.reject(function(el){return el.hasAttribute('multiple')})</code>. Потом сериализуем <code>Form.serializeElements()</code> отфильтрованную коллекцию и отправляем через ajax <code>new Ajax.Request()</code></p>
+<p>Это всё очень хорошо, но есть один ньюанс почему стоит учить CSS3 селекторы нужно (фильтрация через отбрасываение(reject-based) и по селектору (selector-based) именют идентичный результат):</p>
+
+<div class="wp_syntax"><div class="code"><pre class="javascript">$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'register'</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">observe</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'submit'</span>, <span style="color: rgb(0, 51, 102); font-weight: bold;">function</span><span style="color: rgb(102, 204, 102);">(</span>e<span style="color: rgb(102, 204, 102);">)</span><span style="color: rgb(102, 204, 102);">{</span>
+  Event.<span style="color: rgb(0, 0, 102);">stop</span><span style="color: rgb(102, 204, 102);">(</span>e<span style="color: rgb(102, 204, 102);">)</span>;
+  <span style="color: rgb(0, 51, 102); font-weight: bold;">new</span> Ajax.<span style="color: rgb(0, 102, 0);">Request</span><span style="color: rgb(102, 204, 102);">(</span>$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(0, 0, 102); font-weight: bold;">this</span><span style="color: rgb(102, 204, 102);">)</span>.<span style="color: rgb(0, 102, 0);">readAttribute</span><span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'action'</span><span style="color: rgb(102, 204, 102);">)</span>, <span style="color: rgb(102, 204, 102);">{</span>
+    parameters: Form.<span style="color: rgb(0, 102, 0);">serializeElements</span><span style="color: rgb(102, 204, 102);">(</span>$$<span style="color: rgb(102, 204, 102);">(</span><span style="color: rgb(51, 102, 204);">'#register input:not([multiple])'</span><span style="color: rgb(102, 204, 102);">)</span><span style="color: rgb(102, 204, 102);">)</span>
+  <span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span>
+<span style="color: rgb(102, 204, 102);">}</span><span style="color: rgb(102, 204, 102);">)</span></pre></div></div>
+
+<h2>Enjoy prototyping!</h2>
+</div>
+Created by <a href="http://thinkweb2.com/" title="kangax">kangax</a><br />translated by <a href="http://vectoroc.com">vectoroc</a><br /> Вопросы? Предложения? Найди меня на #prototype [kangax] или пошли мне email [ kangax@gmail.com ]
+	</body></html>

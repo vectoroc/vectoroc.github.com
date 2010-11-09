@@ -1,0 +1,383 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=cp1251" />
+		<title>Prototype 1.6.0 RC1: Changes to the Class and Event APIs, Hash rewrite, and bug fixes</title>
+		<style type='text/css''>
+
+/* lucida grande pseudo-italic looks awful, so let's use Trebuchet for italic instead */
+
+em, i, cite, var {
+  font-family: 'Trebuchet MS', sans-serif;
+}
+
+#col1 { 
+  width: 500px;
+}
+
+#col2 {
+  margin-left: 540px;
+}
+
+/*------------------------------------------------------------------------
+ *=UTILS
+ ------------------------------------------------------------------------*/
+
+img { border: 0; }
+
+.clearfix:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
+
+.clearfix {display: inline-table;}
+
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */
+
+pre {
+  margin: 0.5em 0 !important;
+}
+
+/*------------------------------------------------------------------------
+ *=BLOG
+ ------------------------------------------------------------------------*/
+#blog h2 {
+  font-size: 170%;
+  font-weight: normal;
+  margin-bottom: 5px;
+  line-height: 100%;
+}
+
+#blog #excerpt {
+   line-height: 160%;
+   font-size: 110%;
+   color: #333;
+}
+
+.barticle {
+  margin-bottom: 20px;
+}
+
+.barticle .meta, #bhead #meta {
+  font-size: 82%;
+  color: #777;
+  font-weight: bold;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  background: url(../images/cmt.png) no-repeat;
+}
+
+#archives .arbody a { color:#223377; text-decoration:underline }
+#archives .arbody a:hover { color:#ff6600 }
+#archives .arbody a:visited { color:#333 }
+
+.blogarticle {
+  font-size: 102%;
+  line-height: 150%;
+}
+
+.blogarticle a, #excerpt a {
+    color: #f60;
+}
+
+.blogarticle a:hover, #excerpt a:hover {
+  color: #000;
+}
+
+#blog h2 a {
+  color: #237;
+  text-shadow: 2px 2px #fff;
+}
+
+#blog h2 a:hover {
+  color: #f60;
+}
+
+.arbody {
+  line-height: 150%;
+}
+
+.cats {
+  list-style: none;
+}
+
+.cats li a {
+  display: block;
+  padding: 5px 5px 5px 25px;
+  border-bottom: 1px solid #eee;
+  background: url(../images/method.png) 5px 50% no-repeat;
+}
+
+.cats li a:hover {
+  background-color: #eee;
+}
+
+#blog h3, #blog h4, #blog h5 {
+  margin-top: 20px;
+  margin-bottom: 0.5em;
+  margin-left: -10px;
+  color: #333;
+}
+
+#blog p {
+  margin-bottom: 10px;
+}
+
+pre {
+    overflow: auto;
+}
+
+pre code {
+  font-size: 95% !important;
+}
+
+label {
+  font-weight: bold;
+  font-size: 92%;
+}
+
+dd {
+  margin-bottom: 10px;
+}
+
+.cmt {
+  background: #F8F8EC;
+  padding: 10px;
+  border: 1px solid #EEEEC7;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.cmt cite {
+  position: relative;
+  height: 80px !important;
+}
+
+.cmt .gravatar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 3px;
+  background: #fff;
+  border: 1px solid #eee;
+}
+
+.cauthor a {
+  color: #15A;
+  border-bottom: 1px dotted #ccc;
+  padding-left: 20px;
+  background: url(../images/member.png) 0 50% no-repeat;
+}
+
+a.cmt-anchor {
+  position: absolute;
+  display: block;
+  width: 14px;
+  height: 14px;
+  right: 5px !important;
+  top: 5px;
+  text-indent: -9999px;
+  background: url(../images/comment.png) no-repeat;
+}
+
+.cmt .cauthor, .cmt .cdate {
+  font-style: normal;
+  font-weight: bold;
+  display: block;
+  margin: 5px 0;
+}
+
+.cmt .cdate {
+  font-weight: normal;
+  color: #b62;
+  font-size: 82%;
+  padding: 5px;
+  text-align: right;
+}
+
+.cbody {
+  font-size: 92%;
+  margin: 10px 0;
+  color: #441;
+  padding-left: 20px;
+}
+
+.cbody pre {
+  background: #F8F8DF;
+  margin: 10px 0;
+}
+
+.cbody blockquote {
+  margin: 10px;
+  font-style: italic;
+}
+
+.cbody a {
+  color: #EE8811;
+}
+		</style>
+		
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/code_highlighter.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/javascript.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/html.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/css.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/ruby.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/ebnf.js" type="text/javascript"></script>
+<style type="text/css">@import url(http://victor.kolibrios.org/webdev/ext-js/highlight/syntax.css);</style>
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-2718571-3";
+urchinTracker();
+</script>
+
+	</head>
+	<body>
+       <div id="bhead">
+          <h2><a href="http://prototypejs.org/2007/10/16/prototype-1-6-0-rc1-changes-to-the-class-and-event-apis-hash-rewrite-and-bug-fixes">Prototype 1.6.0 RC1: Изменены  Class и Event API, Hash переписан, пофикшены баги...</a></h2>
+           <div id="meta" class="clearfix">
+
+               by 
+                 
+<a href="http://sam.conio.net">Sam Stephenson</a>
+
+                 | October 16th, 2007
+           </div>
+       </div>
+      <div id="excerpt">
+        <p>Спустя 2 месяца после появления <a href="http://prototypejs.org/2007/8/15/prototype-1-6-0-release-candidate">1.6.0 <span class="caps">RC0</span></a>, в ответ на ваши запросы мы пофиксили несколько багов и произвели некоторые изменения в Class и Event API. Так же устранили давнишнюю путаницу в классе Hash. Эти изменения теперь доступны для скачки во втором релиз-кандидате, <a href="http://prototypejs.org/assets/2007/10/16/prototype.js">Prototype 1.6.0 <span class="caps">RC1</span></a>.  Читайте далее чтобы узнать какие произошли изменения более детально, некоторые из которых, кстати, несовместимы с предыдущими версиями Prototype.</p>
+      </div>
+
+      <div id="abody" class="blogarticle"><h3>Изменения в Class <span class="caps">API</span></h3>
+
+
+	<p>Изменения в <span class="caps">API</span> классов, введеные в <a href="http://dev.rubyonrails.org/changeset/7833">[7833]</a>, результат ответов, которые мы получили на 1.6.0_rc0, и многочисленных длительных дебатов. Наша задача заключалась в упрощении <span class="caps">API</span>, так же как и основании плацдарма для последующих изменений в будущих версиях Prototype.</p>
+
+
+	<p>Для этого мы убрали Class.extend и Class.mixin методы, усовершенствовали Class.create синтаксис, и поменяли способ добавления методов в существующие классы. <span class="caps">API</span> всё ещё обратно совместимо со всеми pre-1.6 версиями Prototype. Мы не меняли алгоритма работы наследования, и вы по прежнему можете получить доступ к методам superclass-а с помощью специального аргумента $super.</p>
+
+
+	<p>Самое большое изменения - это то что все классы (объекты, возвращаемые по Class.create(), не экземпляры этих классов) теперь имеют метод &#8220;addMethods.&#8221;  Этот метод принимает один аргумент - объект, свойства и методы которого приобретут все экземпляры класса.</p>
+
+
+	<p>Например, в 1.6.0_rc0 вы бы писали:</p>
+
+
+<pre><code class="javascript">var Foo = Class.create();
+Class.extend(Foo, { /* instance methods */ });</code></pre>
+
+	<p>Теперь надо писать:</p>
+
+
+<pre><code class="javascript">var Foo = Class.create();
+Foo.addMethods({ /* instance methods */ });</code></pre>
+
+	<p>Как и в 1.6.0_rc0, вы можете добавлять инстансные методы прямо из Class.create:</p>
+
+
+<pre><code class="javascript">var Foo = Class.create({ /* instance methods */ });</code></pre>
+
+	<p>Стоит отметить, что неизменным с 1.6.0_rc0 остался способ наследования от суперкласса, вы можете вставить класс первым аргументом в Class.create (опционально можно далее определить инстансные методы):</p>
+
+
+<pre><code class="javascript">var Bar = Class.create(Foo);
+var Baz = Class.create(Foo, { /* instance methods */ });</code></pre>
+
+	<p>Внутри Prototype вызовет метод addMethods созданного класса чтобы добавить методы, переданные в Class.create.</p>
+
+
+	<p>Ну и наконец, мы изменили Class.create так, чтобы он принимал переменное число аргументов, так что вы можете указать несколько коллекций инстансных методов для добавления в класс. Это удобный механизм добавления примесей (mixin) в класс, перед определением ваших собственных методов:</p>
+
+
+<pre><code class="javascript">var Bar = Class.create(Foo, Enumerable, SomeMixin, { /* instance methods */ });
+var Baz = Class.create(Enumerable, { /* instance methods */ });</code></pre>
+
+	<p>Вы можете заглянуть в наш &#8220;Учебный&#8221; раздел чтобы <a href="http://prototypejs.org/learn/class-inheritance"> ознакомиться с полноценным руководством по классам и наследованию </a> в Prototype.</p>
+
+
+	<h3>Изменения в Event <span class="caps">API</span></h3>
+
+
+	<p>Произошло маленькое, но важное изменение относительно пользовательских событий в <a href="http://dev.rubyonrails.org/changeset/7835">[7835]</a>: имена всех пользовательских событий теперь должны включать пространство имён. Это наш вариант решения проблемы конфликтов имён пользовательских событий с нестандартными встроенными <span class="caps">DOM</span> события, вроде &#8220;mousewheel&#8221; и &#8220;DOMMouseScroll.&#8221;</p>
+
+
+	<p>Более значительное изменени, Prototype обрабатывал события с именами, представленными в массиве the Event.DOMEvents, как встроенные <span class="caps">DOM</span> события. Теперь, Prototype определяет наличие разделителя пространства имён — одиночное двоеточие — чтобы определить какой тип события вы обрабатываете - пользовательское событие или встроенное событие.</p>
+
+
+	<p><strong>Вы должны обновить весь код, использующий событие &#8220;contentloaded&#8221; из 1.6.0_rc0, событие теперь имеет другое имя - &#8220;dom:loaded.&#8221;  Так же вы должны добавить пространство имён ко всем другим пользовательским событиям, чтобы их можно было вызывать и обрабатывать.</strong> Мы советуем использовать уникальные существительные для пространств имён, и глаголы в прошедшем времени для имён событий (например &#8220;effect:queued&#8221;, &#8220;widget:activated&#8221;, и т.д.).</p>
+
+
+	<p>Мы так же исправили небольшую проблему, присущую пользователям, которые продолжают использовать inline-обработчики событий в своём коде: они не могли остановить распространение события с помощью Event.stop(e) в IE, потому что event объект не был расширен. Теперь Event.stop и Event.element распространяются на полученный event-объект автоматически и работают как ожидается в случае с inline обработкой событий. <strong>Заметьте, что использование inline-обработчиков событий по прежденему не приветствуется</strong>; вам стоит перевести ваш код на использование Event.observe или Element#observe методов, там где это возможно.</p>
+
+
+	<h3>Полностью переписан класс Hash</h3>
+
+
+	<p class="notice"><strong>Backwards compatibility change</strong> &#8211; несмотря на то, что хеш служит для тех же целей, что и ранее, новая версия <strong>не</strong> совместима с Hash классом из предыдущих версий Prototype.</p>
+
+
+	<p>Свойства хеша теперь скрыты в приватном хранилище для предотвращения случаев коллизии с инстансными методами и примесными методами хеша. Это значит что теперь прочитать/записать/удалить свойства хеша напрямую не получится; вы должны использовать инстансные методы Hash#get(key), Hash#set(key, value) и Hash#unset(key). К примеру:</p>
+
+
+<pre><code class="javascript">var myhash = new Hash();
+
+// старое API  -->  новое API
+myhash.name = "Вова";  -->  myhash.set('name', 'Вова');
+myhash.name;          -->  myhash.get('name');
+delete myhash.name;   -->  myhash.unset('name');</code></pre>
+
+	<p>Вы также должны ознакомиться с другими изменениями в Hash <span class="caps">API</span>:</p>
+
+	<ul>
+	<li>$H(object) теперь полностью эквивалентно new Hash(object). Оба способа всегда возвращают новый объект, несмотря на то, является аргумент объектом или другим хешем.</li>
+		<li>Hash#merge - возвращает новый хеш вместо модификации оригинального хеша.</li>
+		<li>Hash#update - деструктивная версия Hash#merge, она модифицирует оригинальный хеш.</li>
+		<li>Hash#clone - возвращает новый клонированый экземпляр хеша.</li>
+
+		<li>Hash#toObject - возвращает объект, являющийся отображением, того, что содержится в хеше.</li>
+		<li>Hash.toQueryString - теперь синоним для Object.toQueryString.  (Hash.toQueryString - обьявленый устаревшим и может быть удалён в будущих версиях Prototype.)</li>
+		<li>Hash#remove - удалён в пользу Hash#unset.</li>
+		<li>Hash.toJSON - вместо него надо использовать Object.toJSON или инстансный метод Hash#toJSON.</li>
+	</ul>
+
+
+	<h3>Другие изменения в это релизе</h3>
+
+
+	<ul>
+	<li>Element#wrap теперь возвращает созданный обёрточный элемент вместо оборачиваемого элемента.</li>
+		<li>document.getElementsByClassName и Element#getElementsByClassName - устарели, так как встроенная реализация этих методов возвращается оригинальным NodeList, несмотря на то что эти методы могут только вернуть статические массивы.  Используйте $$ или Element#select вместо них. Пример:
+
+
+<pre><code class="javascript">document.getElementsByClassName('foo')  -->  $$('.foo')
+element.getElementsByClassName('foo')   -->  element.select('.foo')</code></pre></li>
+	</ul>
+
+	<p>С момента выхода 1.6.0_rc0 мы исправили 19 багов; смотрите <a href="http://dev.rubyonrails.org/browser/spinoffs/prototype/tags/rel_1-6-0_rc1/CHANGELOG"><span class="caps">CHANGELOG</span></a>, чтобы узнать более детальную информацию.</p>
+
+
+	<h3>Закачка, Отчет об ошибках, и Получение помощи</h3>
+
+
+	<ul>
+
+	<li><a href="http://prototypejs.org/assets/2007/10/16/prototype.js">Скачать Prototype 1.6.0_rc1</a></li>
+		<li><a href="http://dev.rubyonrails.org/">Послать отчет об ошибках</a> на Rails Trac</li>
+		<li><a href="http://prototypejs.org/discuss">Получить помощь по Prototype</a> на rails-spinoffs листе рассылки или <span class="caps">IRC</span> канале #prototype</li>
+		<li><a href="http://groups.google.com/group/prototype-core">Связаться с Core Team</a> через prototype-core лист рассылки</li>
+
+	</ul>
+
+
+	<p>Спасибо большому числу контрибьютеров, благодаря которым этот релиз стал возможным! <span class="caps">RC1</span> будет нашим последним релиз кандидатом, исключая багфиксы, и вы можете ждать финальной версии 1.6.0 в начале ноября.</p></div>
+	<br/>
+	translated by <a href="http://vectoroc.com">vectoroc</a>
+	</body>
+</html>

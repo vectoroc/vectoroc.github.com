@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/code_highlighter.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/javascript.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/html.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/css.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/ruby.js" type="text/javascript"></script>
+<script src="http://victor.kolibrios.org/webdev/ext-js/highlight/ebnf.js" type="text/javascript"></script>
+<style type="text/css">@import url(http://victor.kolibrios.org/webdev/ext-js/highlight/syntax.css);</style>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<title>Prototype 1.6.0 rc_0</title>
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-2718571-3";
+urchinTracker();
+</script>
+
+</head>
+
+<body>
+<p><span style="font-style: italic;">Вольный перевод статьи. Оригинал располагается <a href="http://prototypejs.org/2007/8/15/prototype-1-6-0-release-candidate">здесь</a>.</span></p>
+<p>Первый релиз-кандидат Prototype 1.6.0 наконец созрел! core team продолжает традицию последовательного обновления API ядра в направлении увеличения производительности и исправлении ошибок. Продолжай читать, чтобы узнать какие произошли изменения в этом важном релизе, или <a href="http://prototypejs.org/assets/2007/8/15/prototype.js">скачай библиотеку сейчас</a> чтобы познакомиться с ней безотлагательно.</p>
+<p>  <strong>Расширения Event API </strong></p>
+<p>Мы назвали 1.6.0 релизом "реконструкции событий" внутри команды, и это видно невооружённым глазом - одна их наших самых гавёных API стала одной их самых лучших. Вот, собственно, что было изменено:</p>
+<ul><li><strong>Обработчики событий, зарегистрированные с помощью <tt>Event.observe</tt> или  <tt>Element#observe</tt>, теперь автоматически связываются с целевым элементом события во всех браузерах.</strong> Это значит, что по умолчанию обработчик ссылается на элемент, над которым произошло событие. Вы можете переопределить это поведение с помощью определения функции обработчика.</li><li><strong>Event-</strong><strong>объект</strong><strong>  теперь расширяется коллекцией методов.</strong> Это значит вы можете теперь писать <tt>event.stop() вместо </tt><tt>Event.stop(event). </tt>Более того,  event-объект приводится в соответствие со стандартными именами свойств  по WC3-стандарту, так например вы можете писать <tt>event.target</tt> вместо <tt>Event.element(event)</tt>.</li><li><strong>Название события и аргументы обработчика в <tt>Event.stopObserving</tt> и  <tt>Element#stopObserving</tt> теперь не обязательны</strong>, так например для полученных элементов вы можете быстро отменить все его обработчики или отменить все обработчики для одного элемента.
+</li><li>Ссылки на элементы под наблюдением (на которые установлены какие-либо обработчики) больше не хранятся во внутреннем кеше во избежание утечек памяти.
+</li><li><strong>Prototype теперь поддерживает пользовательские события</strong>. Вызовите их на DOM элементе с помощью вызова <tt>Element#fire</tt> с указанием названия события и опционально memo объекта(прим. пер. - объект, который используется для передачи информации между посылателем события и получателем). Внутри Prototype трансформирует ваше пользовательское событие в реальное событие DOM, так что оно всплывет по документу подобно событию клика. Это значит, обработчики пользовательских событий могут реагировать на события из дочерних элементов. Вы можете обрабатывать и вызывать события на объекте <tt>document</tt> для глобальных событий.
+
+<pre><code class="html">&lt;div id="container"&gt;
+
+  &lt;h1&gt;&lt;span id="title"&gt;Release notes&lt;/span&gt;&lt;/h1&gt;
+  ...
+&lt;/div&gt;</code></pre> <pre><code class="javascript">$("container").observe("titleChanged", function(event) {
+  this.highlight({ duration: 0.5 });
+});
+
+$("title").fire("titleChanged");</code></pre>
+<li><strong>Мы встроили кросс-браузерную поддержку <tt>DOMContentLoaded</tt> события</strong> посредством нашей собственной событийной системы, так что вы можете быть уведомлены, как только документ полностью загружен:
+<pre><code class="javascript">document.observe ("contentloaded", function(){ ... })</code></pre></li></ul><strong>Расширения Function API</strong><br /><br />
+Мы добавили несколько методов к  <tt>Function.prototype</tt> для лучшей поддержки функциональной и аспектно-ориентированной техник программирования.
+  <ul>
+    <li><strong><tt>Function#wrap</tt> привносит частицу аспектно-ориентированного программирования в отдельные методы, </strong>позволяет вам легче встраивать в существующие функции указанное поведение до и после, обработку возвращаемого значения, или вообще отмену обращения к оригинальной функции. Здесь пример использования <tt>wrap</tt> для добавления поведения в существующий метод прототипа String:<pre><code class="javascript">String.prototype.capitalize = String.prototype.capitalize.wrap( 
+  function(proceed, eachWord) { 
+    if (eachWord &#38;&#38; this.include(" ")) {
+      // capitalize each word in the string
+      return this.split(" ").invoke("capitalize").join(" ");
+    } else {
+      // proceed using the original function
+      return proceed(); 
+    }
+  }); 
+
+"hello world".capitalize()     // "Hello world" 
+"hello world".capitalize(true) // "Hello World"</code></pre>
+    Для более извращенного примера, смотрите как можно добавить jQuery-стиль  методам коллекции элементов.  (<tt>$$(“div.widget”).show().highlight()</tt>)  всего за 40 строк кода обертки для <tt>$$</tt> и <tt>Element.addMethods</tt>.</li><li><strong><tt>Function#curry</tt> позволяет частичное применение функции (partial function  application</strong><strong>)</strong>, подобно <tt>Function#bind</tt>, но сохранная контекст функции неизменённым. 
+<pre><code class="javascript">function sum(a, b) {
+  return a + b;
+}
+
+sum(10, 5) // 15
+var addTen = sum.curry(10);
+addTen(5)  // 15</code></pre></li>
+<li><strong><tt>Function#methodize</tt> инкапсулирует паттерн конвертирования первого аргумента функции в this-значение.</strong> 
+
+<pre><code class="javascript">function addBorder(element, color) {
+  return $(element).setStyle({ 
+    border: "3px solid " + (color || "red")
+  });
+}
+
+addBorder("sidebar", "#ddd");
+$("sidebar").addBorder = addBorder.methodize();
+$("sidebar").addBorder("#888");</code></pre>
+
+Prototype интенсивно использует <tt>methodize</tt> внутри; для примера, многие <tt>Math</tt> методы добавлены к экземплярам <tt>Number</tt>: 
+
+<pre><code class="javascript">$w("abs round ceil floor").each(function(method) { 
+  Number.prototype[method] = Math[method].methodize();
+}); </code></pre>
+
+</li><li><strong><tt>Function#argumentNames</tt> возвращает массив строк, представляющий именованные аргументы функции</strong>, извлеченные из результата выполнения <tt>toString()</tt> функций.</li><li><strong><tt>Function#delay</tt> предостовляет удобную обёртку к <tt>window.setTimeout</tt></strong>, и <tt>Function#defer</tt> - это  <tt>delay</tt> с 10ms таймаутом. 
+
+<pre><code class="javascript">// добавить класс "busy" через одну секунду
+(function() { $("form").addClassName("busy") }).delay(1);
+//  вызвать событие "requestSent" асинхронно
+(function() { $("form").fire("requestSent") }).defer();</code></pre>
+
+</li>
+  </ul>
+  <span style="font-weight: bold;">Расширение Class API </span><br /><br /> Этот релиз делает первоее изменение в "классовом" API с версии 1.0, и добавляет правдивую поддержку методов наследования и базовых классов. Изменения не нарушают совместимость с существующим API.
+  <ul>
+    <li><strong><tt>Class.create</tt> теперь поддерживает 3 альтернативные формы вызова</strong>: теперь вы можете передать базовый класс для наследования, анонимный объект для примешивания (прим. пер. - механизм примесей) к прототипу нового класса, или одновременно и всё сразу.</li><li><strong>Новый метод <tt>Class.extend</tt> работает подобно <tt>Object.extend</tt></strong>, примешивает исходный объект к прототипу результирующего класса.</li><li><strong>Если вы переопределили метод из базового класса, то вы можете теперь получить доступ к базовому методу, указав в перегруженной функции первым агрументом <tt>$super</tt>.</strong> Этот способ работает подобно <tt>Function#wrap</tt> (на самом деле и используется<em></em><tt> Function#wrap</tt>). 
+      <pre><code class="javascript">var Animal = Class.create({
+  initialize: function(name) {
+    this.name = name;
+  },
+  eat: function() {
+    return this.say("Yum!");
+  },
+  say: function(message) {
+    return this.name + ": " + message;
+  }
+});
+
+// subclass that augments a method
+var Cat = Class.create(Animal, {
+  eat: function($super, food) {
+    if (food instanceof Mouse) return $super();
+    else return this.say("Yuk! I only eat mice.");
+  }
+});</code></pre>
+    </li><li><strong>Классы теперь имеют <tt>constructor</tt>, <tt>superclass</tt>, и  <tt>subclasses</tt> свойства</strong> для реализации возможности проследить иерархию наследования. </li>
+  </ul>
+
+  <span style="font-weight: bold;">Расширения Ajax API </span> <br /><br />
+
+Поддержка JSON  Ajax.Request-ом была значительно улучшена в Prototype 1.6.0:
+<ul>
+  <li><strong>Теперь вы можете обращаться к телу JSON ответа как к  JavaScript объекту</strong>, используя свойство responseJSON объекта-передатчика.  (JSON ответы должны иметь заголовок <tt>Content-type</tt> со значением  <tt>application/json</tt>.) 
+<pre><code class="javascript">new Ajax.Request("/people/5.json", {        // >> GET /people/5.json HTTP/1.1
+  onSuccess: function(transport) {          // << Content-type: application/json
+    var person = transport.responseJSON;    // << { id: 5, name: "Tobie Langel", 
+    person.city  // "Geneva"                // <<   city: "Geneva", ... }
+    ...
+  }, method: "get" 
+});
+</code></pre>
+</li>
+  <li><strong>Передающий объект сейчас оборачивается Prototype-ом</strong> в экземпляр <tt>Ajax.Response</tt>, так что он может быть дополнен свойствами вроде <tt>responseJSON</tt> во всех браузерах. <tt>Ajax.Response</tt> к тому же имеет 2 новые возможности, безошибочные методы для доступа к заголовкам, <tt>getHeader</tt> и  <tt>getAllHeaders</tt>; легкий доступ к передатчик и запрос объектам обеспечивается свойствами <tt>request</tt> и <tt>transport</tt>; и прямой доступ ко всем остальным методам и свойствам объекта-передатчика для полной совместимости.</li>
+</ul>
+Новые доступные опции  Ajax.Request:
+<ul>
+  <li><tt>sanitizeJSON</tt> (true по умолчанию) проверяет строку на возможные вредоносные фрагменты и предотвращает их выполнение, если такие фрагменты обнаружены.</li><li><tt>evalJSON</tt> (true по умолчанию) автоматическое вычисление JSON информации, если  заголовок <tt>Content-type</tt> ответа равен  <tt>application/json</tt> и делает её доступной через свойство  <tt>responseJSON</tt> объекта-ответа.</li><li><tt>evalJS</tt> (true по умолчанию) автоматическое выполнение JavaScript, если заголовок <tt>Content-type ответа равен </tt><tt>text/javascript</tt> или чему-нибудь подобному. </li>
+</ul>
+<span style="font-weight: bold;">Расширения DOM API</span><br />
+<ul>
+  <li><strong>Prototype теперь обладает <a href="http://prototypejs.org/2007/5/12/dom-builder">новым кросс-браузерным DOM Builder-ом</a> </strong>:</li>
+</ul>
+<pre><code class="javascript">new Element("input", { name: "user", disabled: true });
+//-&gt; &lt;input name="user" disabled="disabled" /&gt;</code></pre>
+
+DOM построитель использует <tt>Element#writeAttribute</tt>, другое новое дополнение к DOM API, которое  помогает выставлять атрибуты элемента в кросс-браузерном виде.
+<ul>
+  <li><strong><tt>Insertion</tt> объект и пространство имен <tt>Position</tt> объявлены устаревшими</strong> в этом релизе. Вместо них теперь необходимо обращаться к методам <tt>Element</tt>. <tt>Element#insert</tt> принимает разные виды контента(DOM элементы, HTML код, простой текст, или любой объект):</li>
+</ul>
+<pre><code class="javascript">
+$("items").insert({ after: new Element("p") });
+$("items").insert({ top: "&lt;li&gt;an item&lt;/li&gt;" });
+$("items").insert("&lt;li&gt;another item&lt;/li&gt;"); // defaults to bottom
+</code></pre>
+Если в <tt>insert</tt> передан объект, содержащий метод <tt>toHTML</tt> или  <tt>toElement</tt>, то вызывается этот метод для создания HTML кода или DOM элемента для вставки.
+<pre><code class="javascript">
+var Calendar = Class.create({
+  // ...,
+  toElement: function() {
+    var container = new Element("div");
+    // ...
+    return container;
+  }
+});
+
+$("sidebar").insert(new Calendar());
+// same as $("sidebar").insert({ bottom: new Calendar() }) or
+//         $("sidebar").insert({ bottom: new Calendar().toElement() })
+</code></pre>
+<ul><li><strong><tt>Element#update</tt> и <tt>Element#replace</tt> теперь принимают DOM элементы </strong>или объекты с методами <tt>toHTML</tt> или <tt>toElement</tt>. Также сглажена ситуация с <tt></tt>&lt;table&gt;<tt>- и <tt>&lt;select&gt;-относительные (related) элементами в IE и Opera 9.  </li><li><strong><tt>Element#setStyle</tt> теперь принимает или строку с CSS правилом</strong> (введено в этой версии), или хеш пар стиль/значение. 
+</li>
+  </ul>
+<pre><code class="javascript">
+$("header").setStyle("font-size: 12px; float: left; opacity: 0.5");
+</code></pre>
+<p>Заметка о производительности: uncamelized-стиль имён свойств в случае установки стиля через хеш объявлен устаревшим. Так что если вы имеете код вроде этого:</p>
+<pre><code class="javascript">
+$("header").setStyle({ "font-size": "12px" });
+</code></pre>
+<p>Вам необходимо заменить его на один из двух вариантов:</p>
+
+<pre><code class="javascript">
+$("header").setStyle({ fontSize: "12px" });
+$("header").setStyle("font-size: 12px");
+</code></pre>
+
+<ul>
+<li><strong>Element#identify - новый метод</strong>, который возвращает идентификатор элемента, если такой существует, или устанавливает элементу уникальный автоматически генерируемый идентификатор(в форме “anonymous_element_” + значение автоматически увеличиваемого счетчика):
+<pre><code class="html">
+&lt;div id="my_div"&gt;
+  &lt;p&gt;some content&lt;/p&gt;
+&lt;/div&gt;
+</code></pre>
+
+<pre><code class="javascript">
+$("my_div").identify();
+// -&gt; "my_div" 
+$("my_div").down().identify();
+// -&gt; "anonymous_element_1" 
+</code></pre>
+
+<pre><code class="html">
+&lt;div id="my_div"&gt;
+  &lt;p id="anonymous_element_1"&gt;some content&lt;/p&gt;
+&lt;/div&gt;
+
+</code></pre>
+</li>
+<li>Element#wrap - удобный и гибкий способ <strong>оборачивания DOM элементов</strong>:
+
+<pre><code class="html">
+&lt;img id="my_img" /&gt;
+&lt;span id="my_span"&gt;a picture&lt;/span&gt;
+</code></pre>
+
+<pre><code class="javascript">
+$("my_img").wrap();
+$("my_span").wrap('p', { className: "caption" });
+</code></pre>
+
+<pre><code class="html">
+&lt;div&gt;&lt;img id="my_img" /&gt;&lt;/div&gt;
+
+&lt;p class="caption"&gt;&lt;span id="my_span"&gt;a picture&lt;/span&gt;&lt;/p&gt;
+</code></pre>
+
+</li>
+</ul>
+<p>Новый объект <tt>document.viewport</tt> позволяет определить <strong>размеры и позицию окна браузера</strong>: </p>
+<pre><code class="javascript">document.viewport.getDimensions()     // { width: 1149, height: 923 }
+document.viewport.getWidth()          // 1149
+document.viewport.getHeight()         // 923
+document.viewport.getScrollOffsets()  // { left: 0, top: 1592 }
+</code></pre>
+
+
+<strong>Расширения API шаблонов.</strong><br />
+<br />
+<ul>
+<li> Теперь вы можете выполнять отдельные замены по шаблону с помощью <tt>String#interpolate</tt>, вместо того, чтобы сначала создать объект <tt>Template</tt>, а затем сделать замену.  
+  <pre><code class="javascript">"#{last}, #{first}".interpolate({ first: "Andrew", last: "Dupont" })
+// "Dupont, Andrew"</code></pre>
+  </li>
+<li> Если вы передаете в <tt>String#interpolate</tt> или <tt>Template#evaluate</tt> объект с методом <tt>toTemplateReplacements</tt>, то этот метод будет использован для получения списка замен.</li>
+<li> Теперь вы можете заменить свойства значения в шаблонной строке, использую нотацию "точка" или "скобка" (или и то, и другое).
+<pre><code class="javascript">"#{name.last}, #{name.first[0]}. (#{location})".interpolate({
+  name: { first: "Christophe", last: "Porteneuve" }, location: "Paris" 
+}) // "Porteneuve, C. (Paris)"</code></pre>
+</li>
+</ul>
+
+<strong>Расширенный смысл <tt>grep</tt>-а </strong><br />
+<p>Prototype 1.6.0 вводит новое соглашение для первого параметра <tt>Enumerable#grep</tt>: аргумент должен быть объектом, имеющим метод <tt>match</tt>, который будет просматривать каждый элемент в <tt>Enumerable</tt>; Если метод возвращает true, то элемент будет добавлен в результирующий массив, возвращаемый <tt>grep</tt>-ом. Это значит, что вы можте теперь фильтровать массивы с помощью <tt>grep</tt>-а, передавая ему любой объект имеющий метод <tt>match</tt>. Для примера, вы можете легко сократить массив DOM до массива, содержащего только элементы, соответствующие заданному CSS селектору:
+<pre><code class="javascript">elements.grep(new Selector("div.widget:first-child"))</code></pre>
+Прототайп связывает <tt>RegExp#test</tt> с <tt>RegExp#match</tt>, так что существующий код например просматривающий строку массива с помощью регулярных выражений будут работать так, как вы этого и ожидаете. Конвенция метода сравнения навеяна Ruby оператором ===.
+</p>
+
+<strong><p> Улучшена поддержка JavaScript 1.6 и WHATWG 1.0 стандартов</p></strong>
+
+<p>Мы подчеркнули свою приверженность веб-стандартам  в этой версии с улучшенной поддержкой JavaScript 1.6 и Web WHATWG 1.0 спецификации приложений.
+</p>
+    <ul>
+      <li> <tt>Array#indexOf</tt> более не заменяет родной метод, если он имеется.
+    </li>
+      <li>Enumerable теперь использует встроенный <tt>Array#forEach </tt>вместо <tt>Array#_each</tt>, если это возможно.
+    </li><li> Enumerable теперь имеет синонимы для методов массивов в JavaScript 1.6 <tt>filter</tt> , <tt>entries</tt> , <tt>every</tt> , and <tt>some</tt> , которые связываются с <tt>findAll</tt> , <tt>toArray</tt> , <tt>all</tt> , and <tt>any</tt> , соответственно. 
+    </li>
+    <li> Все <tt>Enumerable</tt> методы теперь имеют дополнительный параметр, <tt>context</tt>, который, если присутствует, будет связан с итератором при вызове, для совместимости с методами Array в JavaScript 1.6.
+    </li><li> <tt>Element#getElementsByClassName</tt> стал поддерживать множественные имена классов, полученные как разделённые пробелом строк, как описано в WHATWG и реализовано в Firefox 3. Собственный вариант <tt>getElementsByClassName</tt> используется в браузерах, которые поддерживают его. 
+</li></ul>
+<p><strong>... И ещё немного</strong></p>
+
+<p>Это лишь основные изменения; смотри в CHANGELOG полный список изменений. Мы считаем что многочисленные мелкие изменения являются лишь результатом приведения API к более удобному виду. Так что пожалуйста сообщайте нам, что вы думаете, в mailing списках, и о любых багах, найденных вами (желательно с протестированными патчами).
+</p>
+<strong><p>Заметка о этом релиз кандидате</p></strong>
+<p>Мы не намерены в Prototype 1.6.0_rc0 изменять API, но оставляем за собой право внести коррективы API и добавить или убрать функции, которые будут представлены в окончательном варианте. 
+</p>
+<p><b>Download</b></p>
+<p><ul>
+<li><a href="http://prototypejs.org/assets/2007/8/15/prototype.js">Скачать Prototype 1.6.0_rc0</a></li>
+<li><a href="http://prototypejs.org/discuss">Получить помощь по Prototype</a> на rails-spinoffs mailing листе или на IRC канале #prototype</li>
+<li><a href="http://groups.google.com/group/prototype-core">Связаться с Core Team</a> на  prototype-core mailing листе</li>
+<li><a href="http://dev.rubyonrails.org/">Послать отчет об ошибках</a> на Rails Trac</li>
+</ul>
+
+Спасибо многочисленным помощникам, которые сделали этот релиз возможным!
+</p>
+<hr />
+translated by <a href="http://vectoroc.com">vectoroc</a>
+</body>
+</html>
